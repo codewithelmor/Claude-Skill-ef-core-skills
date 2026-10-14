@@ -99,7 +99,7 @@ You can also just ask: "add a migration for the new Order fields". Only `ef-migr
 
 **Update the database.** Claude lists the migrations as applied or pending and asks for the target (latest, a specific migration, or `0`). It asks you to confirm which database will be used. A rollback or `--target 0` needs a separate, explicit "yes".
 
-**Remove a migration.** Claude names the last migration and checks whether it is applied. If it is, Claude recommends reverting the database first with `/ef-database-update` and the previous migration as the target. `--force` is only used if you explicitly say the database state is handled.
+**Remove a migration.** Claude names the last migration and checks whether it is applied. If it is, Claude offers two routes: revert first with `/ef-database-update` and the previous migration as the target (recommended), or `--force`, which reverts the migration in the database (runs its `Down()`) and then removes the files. `--force` is only used if you explicitly choose it.
 
 **Scaffold.** Two modes:
 - **A. Scaffold, then split** (default): `dotnet ef dbcontext scaffold`, then the configuration split.
@@ -153,7 +153,7 @@ Exit codes: `0` ok, `1` error, `2` bad usage, `3` a decision is needed (see the 
 - Passwords in connection strings are masked in the displayed command. Prefer `Name=ConnectionStrings:...`, user-secrets, or an environment variable (`--connection-env`) so passwords never appear in the chat.
 - No shell string building. Arguments are passed as a list, so quotes and spaces in names or connection strings are safe.
 - For production databases, Claude suggests generating a script (`dotnet ef migrations script --idempotent`) so it can go through your normal deployment process.
-- Claude never adds `--force` on its own.
+- Claude never adds `--force` on its own. For `remove` it reverts the migration in the database; for `scaffold` it overwrites files.
 
 ---
 

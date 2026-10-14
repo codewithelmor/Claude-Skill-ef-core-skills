@@ -1,6 +1,7 @@
 ---
 name: ef-migration-add
 description: Create a new EF Core migration (dotnet ef migrations add) in any .NET solution layout - single web project, Clean Architecture, CQRS, modular monolith, or several DbContexts. Finds the DbContext and startup project automatically, shows the exact command, and runs it after confirmation. Also fills an empty migration with custom SQL (views, stored procedures, functions, triggers, data fixes). Use whenever the user wants to add or create a migration, capture model changes, or put SQL into a migration, even if they never mention dotnet ef.
+argument-hint: "[migration-name]"
 ---
 
 # Add an EF Core migration
@@ -8,7 +9,8 @@ description: Create a new EF Core migration (dotnet ef migrations add) in any .N
 Helper script: `scripts/ef_tool.py` in this skill's folder. It needs Python 3.8+ and nothing else.
 Run it with whichever of `python3`, `python` or `py -3` exists on this machine (Windows usually has `python` or `py`).
 Use the absolute path to the script. Every call ends with one line `EF_TOOL_RESULT: {json}`; read that line.
-Run commands from the repository root. If the user gave arguments with the slash command (for example a migration name), use them.
+Run commands from the repository root.
+Arguments passed with the slash command: `$ARGUMENTS` (normally the migration name; if empty, ask).
 
 ## Steps
 

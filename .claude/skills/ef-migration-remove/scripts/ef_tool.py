@@ -101,6 +101,7 @@ def display_command(args) -> str:
     shown = []
     for a in args:
         a = re.sub(r'(?i)((?:password|pwd)\s*=\s*)[^;"]+', r"\1********", a)
+        a = re.sub(r"(://[^:/@\s]+:)[^@\s]+@", r"\1********@", a)
         if re.search(r"[\s;=\"'&|<>^$]", a):
             a = '"' + a.replace('"', '\\"') + '"'
         shown.append(a)
@@ -371,7 +372,11 @@ def build_ef_args(a):
         if a.no_onconfiguring:
             args.append("--no-onconfiguring")
         if a.extra:
-            args += shlex.split(a.extra)
+            if os.name == "nt":   # POSIX parsing would swallow backslashes in Windows paths
+                args += [x[1:-1] if len(x) > 1 and x[0] == x[-1] and x[0] in "\"'" else x
+                         for x in shlex.split(a.extra, posix=False)]
+            else:
+                args += shlex.split(a.extra)
     else:
         fail(f"Unknown verb {v}", 2)
     return args
@@ -410,7 +415,8 @@ def cmd_ef(a):
     if a.verb == "update" and a.target and a.target != "0":
         warnings.append("If the target is not the latest migration, later migrations are rolled back.")
     if a.verb == "remove" and a.force:
-        warnings.append("--force removes the migration even if applied; it does NOT revert the database.")
+        warnings.append("--force connects to the database and, if the migration is applied, REVERTS it "
+                        "(runs its Down()) before removing the files. Data in affected tables/columns can be lost.")
     if a.verb == "scaffold" and a.force:
         warnings.append("--force overwrites existing generated files.")
     say("Command:")

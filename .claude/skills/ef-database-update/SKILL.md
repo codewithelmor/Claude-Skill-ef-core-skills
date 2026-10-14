@@ -2,6 +2,7 @@
 name: ef-database-update
 description: Apply EF Core migrations to a database (dotnet ef database update), or roll back to an earlier migration or to zero. Lists applied and pending migrations, lets the user choose the target, shows the exact command, and runs it only after explicit confirmation. Invoke manually with /ef-database-update.
 disable-model-invocation: true
+argument-hint: "[target-migration | 0]"
 ---
 
 # Update the database (apply or roll back migrations)
@@ -9,7 +10,7 @@ disable-model-invocation: true
 Helper script: `scripts/ef_tool.py` in this skill's folder. It needs Python 3.8+ and nothing else.
 Run it with whichever of `python3`, `python` or `py -3` exists on this machine. Use the absolute path to the script.
 Every call ends with one line `EF_TOOL_RESULT: {json}`; read that line. Run from the repository root.
-If the user gave arguments with the slash command (for example a target migration), use them.
+Arguments passed with the slash command: `$ARGUMENTS` (normally a target migration, or `0`; if empty, use latest after asking).
 
 This changes a real database. Be slow and explicit about what will happen and where.
 
